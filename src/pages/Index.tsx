@@ -1,10 +1,11 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, CheckCircle, Star, Users, Code2, Shield, Smartphone, Database, Cloud, Palette } from "lucide-react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
+import { organizationSchema, createReviewSchema } from "@/lib/structuredData";
 
 const Index = () => {
   const services = [
@@ -69,8 +70,24 @@ const Index = () => {
     { step: "05", title: "Support", description: "Ongoing maintenance, updates, and technical support" }
   ];
 
+  // Structured data for homepage
+  const homepageStructuredData = [
+    organizationSchema,
+    ...testimonials.map(testimonial => 
+      createReviewSchema(testimonial.content, testimonial.name, testimonial.rating)
+    )
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <SEOHead
+        title="Nexus - Custom Software Development Agency | Web & Mobile Apps"
+        description="Transform your ideas into powerful software solutions. Nexus builds custom web apps, mobile apps, APIs, and cloud solutions. Expert React, Node.js, and full-stack development services."
+        keywords="custom software development, web app development, mobile app development, React development, Node.js, API development, cloud solutions, UI/UX design, software agency, full-stack development"
+        canonicalUrl="https://nexus-agency.com/"
+        structuredData={homepageStructuredData}
+      />
+      
       <Navbar />
       
       {/* Hero Section */}
@@ -83,16 +100,16 @@ const Index = () => {
               <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"> Digital Solution</span>
             </h1>
             <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-              We're Nexus - a software building agency that transforms your ideas into powerful, scalable applications. From web apps to mobile solutions, we've got you covered.
+              We're Nexus - a leading software development agency that transforms your innovative ideas into powerful, scalable applications. From custom web applications to mobile solutions, we deliver cutting-edge technology solutions.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/login">
+              <Link to="/login" aria-label="Start your custom software development project">
                 <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 text-lg">
                   Start Your Project
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Link to="/products">
+              <Link to="/products" aria-label="View our software development services">
                 <Button variant="outline" size="lg" className="border-white/20 text-white hover:bg-white/10 px-8 py-3 text-lg">
                   View Our Services
                 </Button>
@@ -106,9 +123,9 @@ const Index = () => {
       <section className="py-20 bg-white/5 backdrop-blur-sm">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">Our Development Services</h2>
+            <h2 className="text-4xl font-bold text-white mb-4">Our Software Development Services</h2>
             <p className="text-gray-300 text-lg max-w-2xl mx-auto">
-              From concept to deployment, we provide comprehensive software development services tailored to your needs.
+              From concept to deployment, we provide comprehensive software development services tailored to your business needs.
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -135,8 +152,8 @@ const Index = () => {
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">How We Work</h2>
-            <p className="text-gray-300 text-lg">Our proven development process ensures quality results</p>
+            <h2 className="text-4xl font-bold text-white mb-4">Our Proven Development Process</h2>
+            <p className="text-gray-300 text-lg">Our proven development process ensures quality results and client satisfaction</p>
           </div>
           <div className="grid md:grid-cols-5 gap-8">
             {process.map((item, index) => (
@@ -156,14 +173,14 @@ const Index = () => {
       <section className="py-20 bg-white/5 backdrop-blur-sm">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">What Our Clients Say</h2>
-            <p className="text-gray-300 text-lg">Trusted by startups and enterprises alike</p>
+            <h2 className="text-4xl font-bold text-white mb-4">Client Success Stories</h2>
+            <p className="text-gray-300 text-lg">Trusted by startups and enterprises for custom software development</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
               <Card key={index} className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20 transition-all duration-300">
                 <CardContent className="pt-6">
-                  <div className="flex mb-4">
+                  <div className="flex mb-4" aria-label={`${testimonial.rating} out of 5 stars`}>
                     {[...Array(testimonial.rating)].map((_, i) => (
                       <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
                     ))}
@@ -185,9 +202,9 @@ const Index = () => {
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold text-white mb-4">Ready to Build Something Amazing?</h2>
           <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-            Let's discuss your project and see how we can bring your vision to life with cutting-edge technology.
+            Let's discuss your project and see how we can bring your vision to life with cutting-edge technology and expert development.
           </p>
-          <Link to="/pricing">
+          <Link to="/pricing" aria-label="Get started with custom software development">
             <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg">
               Get Started Today
               <ArrowRight className="ml-2 h-5 w-5" />

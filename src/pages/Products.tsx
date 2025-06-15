@@ -1,10 +1,11 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, CheckCircle, Code2, Smartphone, Database, Cloud, Palette, Shield } from "lucide-react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
+import SEOHead from "@/components/SEOHead";
+import { createServiceSchema, createBreadcrumbSchema } from "@/lib/structuredData";
 
 const Products = () => {
   const services = [
@@ -94,8 +95,27 @@ const Products = () => {
     }
   ];
 
+  // Structured data for services page
+  const servicesStructuredData = [
+    createBreadcrumbSchema([
+      { name: "Home", url: "https://nexus-agency.com/" },
+      { name: "Services", url: "https://nexus-agency.com/products" }
+    ]),
+    ...services.map(service => 
+      createServiceSchema(service.title, service.description)
+    )
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <SEOHead
+        title="Software Development Services | Custom Web & Mobile App Development - Nexus"
+        description="Comprehensive software development services including custom web applications, mobile apps, APIs, cloud solutions, UI/UX design, and ongoing maintenance. Expert React, Node.js, and full-stack development."
+        keywords="software development services, custom web development, mobile app development, API development, cloud solutions, UI/UX design, React development, Node.js development, full-stack development, enterprise software"
+        canonicalUrl="https://nexus-agency.com/products"
+        structuredData={servicesStructuredData}
+      />
+      
       <Navbar />
       
       <div className="pt-24 pb-16">
@@ -103,11 +123,11 @@ const Products = () => {
           {/* Header */}
           <div className="text-center mb-16">
             <h1 className="text-5xl font-bold text-white mb-6">
-              Software Development
+              Professional Software Development
               <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"> Services</span>
             </h1>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              From concept to deployment, we provide comprehensive software development services that transform your ideas into powerful digital solutions.
+              From concept to deployment, we provide comprehensive software development services that transform your ideas into powerful digital solutions. Our expert team specializes in modern technologies and agile development practices.
             </p>
           </div>
 
@@ -138,7 +158,7 @@ const Products = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
+                  <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white" aria-label={`Get quote for ${service.title}`}>
                     Get Quote
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
@@ -149,18 +169,18 @@ const Products = () => {
 
           {/* CTA Section */}
           <div className="text-center bg-white/5 backdrop-blur-sm rounded-2xl p-12 border border-white/20">
-            <h2 className="text-3xl font-bold text-white mb-4">Ready to Start Your Project?</h2>
+            <h2 className="text-3xl font-bold text-white mb-4">Ready to Start Your Custom Software Project?</h2>
             <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
-              Let's discuss your requirements and create a custom solution that perfectly fits your business needs.
+              Let's discuss your requirements and create a custom software solution that perfectly fits your business needs and technical requirements.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/pricing">
+              <Link to="/pricing" aria-label="View our software development pricing plans">
                 <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3">
                   View Pricing
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Link to="/login">
+              <Link to="/login" aria-label="Start your software development project">
                 <Button variant="outline" size="lg" className="border-white/20 text-white hover:bg-white/10 px-8 py-3">
                   Start Your Project
                 </Button>
