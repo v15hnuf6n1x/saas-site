@@ -5,25 +5,26 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from "recharts";
 import { 
-  Users, 
-  TrendingUp, 
-  DollarSign, 
-  Activity, 
-  Bell, 
-  Settings, 
-  LogOut,
-  Zap,
+  Code2, 
+  ExternalLink, 
+  FileText, 
+  MessageSquare, 
   Calendar,
-  FileText,
-  BarChart3
+  CheckCircle,
+  Clock,
+  AlertCircle,
+  Smartphone,
+  Database,
+  Globe,
+  Settings,
+  LogOut,
+  Bell
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState("overview");
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -35,56 +36,129 @@ const Dashboard = () => {
     navigate("/");
   };
 
-  const monthlyData = [
-    { month: "Jan", revenue: 4000, users: 240, orders: 120 },
-    { month: "Feb", revenue: 3000, users: 180, orders: 98 },
-    { month: "Mar", revenue: 5000, users: 320, orders: 180 },
-    { month: "Apr", revenue: 4500, users: 280, orders: 150 },
-    { month: "May", revenue: 6000, users: 400, orders: 220 },
-    { month: "Jun", revenue: 5500, users: 380, orders: 200 },
+  const applications = [
+    {
+      id: 1,
+      name: "E-Commerce Platform",
+      description: "Modern online store with payment integration and inventory management",
+      status: "Live",
+      progress: 100,
+      type: "Web Application",
+      technologies: ["React", "Node.js", "PostgreSQL", "Stripe"],
+      lastUpdated: "2 days ago",
+      liveUrl: "https://store.example.com",
+      thumbnail: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=300&h=200&fit=crop",
+      nextMilestone: "Performance optimization review",
+      supportTickets: 0
+    },
+    {
+      id: 2,
+      name: "Mobile Banking App",
+      description: "Secure mobile banking application with biometric authentication",
+      status: "Testing",
+      progress: 85,
+      type: "Mobile Application",
+      technologies: ["React Native", "Node.js", "MongoDB", "AWS"],
+      lastUpdated: "1 day ago",
+      thumbnail: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=300&h=200&fit=crop",
+      nextMilestone: "Security audit completion",
+      supportTickets: 2
+    },
+    {
+      id: 3,
+      name: "Analytics Dashboard",
+      description: "Real-time business intelligence dashboard with custom reports",
+      status: "Development",
+      progress: 60,
+      type: "Web Application",
+      technologies: ["Vue.js", "Python", "Redis", "Docker"],
+      lastUpdated: "3 hours ago",
+      thumbnail: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=300&h=200&fit=crop",
+      nextMilestone: "Data visualization implementation",
+      supportTickets: 1
+    },
+    {
+      id: 4,
+      name: "API Gateway",
+      description: "Microservices API gateway with rate limiting and authentication",
+      status: "Planning",
+      progress: 25,
+      type: "Backend Service",
+      technologies: ["Go", "Docker", "Kubernetes", "PostgreSQL"],
+      lastUpdated: "1 week ago",
+      thumbnail: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=300&h=200&fit=crop",
+      nextMilestone: "Architecture design review",
+      supportTickets: 0
+    }
   ];
 
-  const pieData = [
-    { name: "Desktop", value: 65, color: "#3B82F6" },
-    { name: "Mobile", value: 25, color: "#8B5CF6" },
-    { name: "Tablet", value: 10, color: "#10B981" },
-  ];
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "Live":
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
+      case "Testing":
+        return <AlertCircle className="h-4 w-4 text-yellow-500" />;
+      case "Development":
+        return <Clock className="h-4 w-4 text-blue-500" />;
+      case "Planning":
+        return <Clock className="h-4 w-4 text-gray-500" />;
+      default:
+        return <Clock className="h-4 w-4 text-gray-500" />;
+    }
+  };
 
-  const recentActivities = [
-    { id: 1, user: "John Doe", action: "Created new project", time: "2 minutes ago", avatar: "JD" },
-    { id: 2, user: "Sarah Smith", action: "Updated dashboard", time: "5 minutes ago", avatar: "SS" },
-    { id: 3, user: "Mike Johnson", action: "Completed task", time: "10 minutes ago", avatar: "MJ" },
-    { id: 4, user: "Emily Brown", action: "Shared document", time: "15 minutes ago", avatar: "EB" },
-  ];
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "Live":
+        return <Badge className="bg-green-500/20 text-green-300 border-green-500/30">Live</Badge>;
+      case "Testing":
+        return <Badge className="bg-yellow-500/20 text-yellow-300 border-yellow-500/30">Testing</Badge>;
+      case "Development":
+        return <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30">Development</Badge>;
+      case "Planning":
+        return <Badge className="bg-gray-500/20 text-gray-300 border-gray-500/30">Planning</Badge>;
+      default:
+        return <Badge>{status}</Badge>;
+    }
+  };
+
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case "Web Application":
+        return <Globe className="h-4 w-4" />;
+      case "Mobile Application":
+        return <Smartphone className="h-4 w-4" />;
+      case "Backend Service":
+        return <Database className="h-4 w-4" />;
+      default:
+        return <Code2 className="h-4 w-4" />;
+    }
+  };
 
   const stats = [
     {
-      title: "Total Revenue",
-      value: "$45,231.89",
-      change: "+20.1%",
-      icon: <DollarSign className="h-4 w-4 text-green-600" />,
-      trend: "up"
+      title: "Active Projects",
+      value: "4",
+      change: "+1 this month",
+      icon: <Code2 className="h-4 w-4 text-blue-600" />,
     },
     {
-      title: "Active Users",
-      value: "2,350",
-      change: "+15%",
-      icon: <Users className="h-4 w-4 text-blue-600" />,
-      trend: "up"
+      title: "Completed Projects",
+      value: "12",
+      change: "+3 this quarter",
+      icon: <CheckCircle className="h-4 w-4 text-green-600" />,
     },
     {
-      title: "Total Orders",
-      value: "1,234",
-      change: "+8%",
-      icon: <Activity className="h-4 w-4 text-purple-600" />,
-      trend: "up"
+      title: "Support Tickets",
+      value: "3",
+      change: "2 resolved today",
+      icon: <MessageSquare className="h-4 w-4 text-purple-600" />,
     },
     {
-      title: "Conversion Rate",
-      value: "3.24%",
-      change: "-2%",
-      icon: <TrendingUp className="h-4 w-4 text-red-600" />,
-      trend: "down"
+      title: "Upcoming Meetings",
+      value: "2",
+      change: "Next: Tomorrow 2PM",
+      icon: <Calendar className="h-4 w-4 text-orange-600" />,
     }
   ];
 
@@ -96,12 +170,12 @@ const Dashboard = () => {
           <div className="flex items-center space-x-4">
             <Link to="/" className="flex items-center space-x-2">
               <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg">
-                <Zap className="h-6 w-6 text-white" />
+                <Code2 className="h-6 w-6 text-white" />
               </div>
-              <span className="text-xl font-bold text-white">SaaSify</span>
+              <span className="text-xl font-bold text-white">Nexus</span>
             </Link>
-            <Badge className="bg-green-500/20 text-green-300 border-green-500/30">
-              Pro Plan
+            <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30">
+              Client Portal
             </Badge>
           </div>
           
@@ -127,7 +201,7 @@ const Dashboard = () => {
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">Welcome back, John!</h1>
-          <p className="text-gray-300">Here's what's happening with your account today.</p>
+          <p className="text-gray-300">Here's an overview of your projects and their current status.</p>
         </div>
 
         {/* Stats Cards */}
@@ -142,125 +216,106 @@ const Dashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-white">{stat.value}</div>
-                <p className={`text-xs ${stat.trend === 'up' ? 'text-green-400' : 'text-red-400'}`}>
-                  {stat.change} from last month
-                </p>
+                <p className="text-xs text-gray-400">{stat.change}</p>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        {/* Charts Section */}
-        <div className="grid lg:grid-cols-2 gap-6 mb-8">
-          {/* Revenue Chart */}
-          <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-            <CardHeader>
-              <CardTitle className="text-white">Revenue Overview</CardTitle>
-              <CardDescription className="text-gray-300">
-                Monthly revenue for the last 6 months
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={monthlyData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                  <XAxis dataKey="month" stroke="#9CA3AF" />
-                  <YAxis stroke="#9CA3AF" />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: '#1F2937', 
-                      border: '1px solid #374151',
-                      borderRadius: '8px',
-                      color: '#F9FAFB'
-                    }} 
-                  />
-                  <Bar dataKey="revenue" fill="url(#gradient)" />
-                  <defs>
-                    <linearGradient id="gradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.8}/>
-                    </linearGradient>
-                  </defs>
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-
-          {/* User Growth Chart */}
-          <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-            <CardHeader>
-              <CardTitle className="text-white">User Growth</CardTitle>
-              <CardDescription className="text-gray-300">
-                Active users over time
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={monthlyData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                  <XAxis dataKey="month" stroke="#9CA3AF" />
-                  <YAxis stroke="#9CA3AF" />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: '#1F2937', 
-                      border: '1px solid #374151',
-                      borderRadius: '8px',
-                      color: '#F9FAFB'
-                    }} 
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="users" 
-                    stroke="#3B82F6" 
-                    strokeWidth={3}
-                    dot={{ fill: '#3B82F6', strokeWidth: 2, r: 4 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Bottom Section */}
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Recent Activity */}
-          <Card className="lg:col-span-2 bg-white/10 backdrop-blur-sm border-white/20">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center">
-                <Activity className="h-5 w-5 mr-2" />
-                Recent Activity
-              </CardTitle>
-              <CardDescription className="text-gray-300">
-                Latest actions from your team
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {recentActivities.map((activity) => (
-                  <div key={activity.id} className="flex items-center space-x-4">
-                    <Avatar>
-                      <AvatarFallback className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-                        {activity.avatar}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-white">
-                        {activity.user}
-                      </p>
-                      <p className="text-sm text-gray-300 truncate">
-                        {activity.action}
-                      </p>
+        {/* Applications Grid */}
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-white">Your Applications</h2>
+            <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
+              <MessageSquare className="h-4 w-4 mr-2" />
+              Request New Project
+            </Button>
+          </div>
+          
+          <div className="grid lg:grid-cols-2 gap-6">
+            {applications.map((app) => (
+              <Card key={app.id} className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/15 transition-all duration-300">
+                <CardHeader>
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex items-center space-x-3">
+                      <img 
+                        src={app.thumbnail} 
+                        alt={app.name}
+                        className="w-12 h-12 rounded-lg object-cover"
+                      />
+                      <div>
+                        <CardTitle className="text-white text-lg">{app.name}</CardTitle>
+                        <div className="flex items-center space-x-2 mt-1">
+                          {getTypeIcon(app.type)}
+                          <span className="text-sm text-gray-400">{app.type}</span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-sm text-gray-400">
-                      {activity.time}
+                    {getStatusBadge(app.status)}
+                  </div>
+                  <CardDescription className="text-gray-300">
+                    {app.description}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {/* Progress */}
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm text-gray-400">Progress</span>
+                        <span className="text-sm text-white">{app.progress}%</span>
+                      </div>
+                      <Progress value={app.progress} className="h-2" />
+                    </div>
+
+                    {/* Technologies */}
+                    <div>
+                      <span className="text-sm text-gray-400 mb-2 block">Technologies</span>
+                      <div className="flex flex-wrap gap-1">
+                        {app.technologies.map((tech, index) => (
+                          <Badge key={index} variant="secondary" className="bg-white/10 text-gray-300 text-xs">
+                            {tech}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Next Milestone */}
+                    <div className="flex items-center space-x-2">
+                      <Calendar className="h-4 w-4 text-gray-400" />
+                      <span className="text-sm text-gray-300">{app.nextMilestone}</span>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex space-x-2 pt-2">
+                      {app.liveUrl && (
+                        <Button size="sm" variant="outline" className="border-white/20 text-white hover:bg-white/10">
+                          <ExternalLink className="h-4 w-4 mr-2" />
+                          View Live
+                        </Button>
+                      )}
+                      <Button size="sm" variant="outline" className="border-white/20 text-white hover:bg-white/10">
+                        <FileText className="h-4 w-4 mr-2" />
+                        Documentation
+                      </Button>
+                      <Button size="sm" variant="outline" className="border-white/20 text-white hover:bg-white/10">
+                        <MessageSquare className="h-4 w-4 mr-2" />
+                        Support {app.supportTickets > 0 && `(${app.supportTickets})`}
+                      </Button>
+                    </div>
+
+                    <div className="text-xs text-gray-400 pt-2">
+                      Last updated: {app.lastUpdated}
                     </div>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
 
-          {/* Quick Actions */}
+        {/* Quick Actions */}
+        <div className="grid lg:grid-cols-2 gap-6">
           <Card className="bg-white/10 backdrop-blur-sm border-white/20">
             <CardHeader>
               <CardTitle className="text-white">Quick Actions</CardTitle>
@@ -270,21 +325,55 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent className="space-y-3">
               <Button className="w-full justify-start bg-white/10 hover:bg-white/20 text-white border-white/20">
-                <FileText className="h-4 w-4 mr-2" />
-                Create Report
-              </Button>
-              <Button className="w-full justify-start bg-white/10 hover:bg-white/20 text-white border-white/20">
-                <Users className="h-4 w-4 mr-2" />
-                Manage Users
-              </Button>
-              <Button className="w-full justify-start bg-white/10 hover:bg-white/20 text-white border-white/20">
-                <BarChart3 className="h-4 w-4 mr-2" />
-                View Analytics
+                <MessageSquare className="h-4 w-4 mr-2" />
+                Contact Development Team
               </Button>
               <Button className="w-full justify-start bg-white/10 hover:bg-white/20 text-white border-white/20">
                 <Calendar className="h-4 w-4 mr-2" />
                 Schedule Meeting
               </Button>
+              <Button className="w-full justify-start bg-white/10 hover:bg-white/20 text-white border-white/20">
+                <FileText className="h-4 w-4 mr-2" />
+                View All Documentation
+              </Button>
+              <Button className="w-full justify-start bg-white/10 hover:bg-white/20 text-white border-white/20">
+                <Code2 className="h-4 w-4 mr-2" />
+                Request New Feature
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+            <CardHeader>
+              <CardTitle className="text-white">Recent Updates</CardTitle>
+              <CardDescription className="text-gray-300">
+                Latest project activities
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-start space-x-3">
+                  <CheckCircle className="h-5 w-5 text-green-400 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-white">E-Commerce Platform performance optimization completed</p>
+                    <p className="text-xs text-gray-400">2 days ago</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <Clock className="h-5 w-5 text-blue-400 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-white">Mobile Banking App security testing in progress</p>
+                    <p className="text-xs text-gray-400">1 day ago</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <Code2 className="h-5 w-5 text-purple-400 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-white">Analytics Dashboard new features deployed</p>
+                    <p className="text-xs text-gray-400">3 hours ago</p>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>

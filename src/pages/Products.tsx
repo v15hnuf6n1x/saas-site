@@ -2,95 +2,95 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, CheckCircle, BarChart3, Database, Users, Shield, Zap, Globe } from "lucide-react";
+import { ArrowRight, CheckCircle, Code2, Smartphone, Database, Cloud, Palette, Shield } from "lucide-react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 
 const Products = () => {
-  const products = [
+  const services = [
     {
-      icon: <BarChart3 className="h-12 w-12 text-blue-500" />,
-      title: "Analytics Pro",
-      description: "Advanced analytics and reporting tools to track your business metrics in real-time.",
+      icon: <Code2 className="h-12 w-12 text-blue-500" />,
+      title: "Custom Web Development",
+      description: "Full-stack web applications built with modern technologies and best practices.",
       features: [
-        "Real-time dashboards",
-        "Custom reports",
-        "Data visualization",
-        "Export capabilities",
-        "API integration"
+        "React, Vue, Angular frontends",
+        "Node.js, Python, .NET backends",
+        "Responsive design",
+        "Progressive Web Apps",
+        "E-commerce solutions"
       ],
       badge: "Most Popular",
       color: "blue"
     },
     {
-      icon: <Database className="h-12 w-12 text-green-500" />,
-      title: "Data Management",
-      description: "Secure and scalable data storage solutions with automated backups and sync.",
+      icon: <Smartphone className="h-12 w-12 text-green-500" />,
+      title: "Mobile App Development",
+      description: "Native and cross-platform mobile applications for iOS and Android.",
       features: [
-        "Automated backups",
-        "Real-time sync",
-        "Data encryption",
-        "Version control",
-        "Multi-region storage"
+        "Native iOS (Swift) & Android (Kotlin)",
+        "React Native cross-platform",
+        "Flutter development",
+        "App Store optimization",
+        "Push notifications"
       ],
-      badge: "Enterprise",
+      badge: "Featured",
       color: "green"
     },
     {
-      icon: <Users className="h-12 w-12 text-purple-500" />,
-      title: "Team Workspace",
-      description: "Collaborative workspace for teams with project management and communication tools.",
+      icon: <Database className="h-12 w-12 text-purple-500" />,
+      title: "API Development",
+      description: "Robust APIs and microservices architecture for scalable applications.",
       features: [
-        "Project management",
-        "Team chat",
-        "File sharing",
-        "Task automation",
-        "Time tracking"
+        "RESTful API design",
+        "GraphQL implementations",
+        "Microservices architecture",
+        "API documentation",
+        "Third-party integrations"
       ],
-      badge: "New",
+      badge: "Enterprise",
       color: "purple"
     },
     {
-      icon: <Shield className="h-12 w-12 text-red-500" />,
-      title: "Security Suite",
-      description: "Comprehensive security tools to protect your business data and applications.",
+      icon: <Cloud className="h-12 w-12 text-orange-500" />,
+      title: "Cloud Solutions",
+      description: "DevOps, deployment, and cloud infrastructure management services.",
       features: [
-        "Advanced threat detection",
-        "Identity management",
-        "Compliance monitoring",
-        "Security audits",
-        "Incident response"
+        "AWS, Azure, Google Cloud",
+        "Docker containerization",
+        "CI/CD pipelines",
+        "Auto-scaling infrastructure",
+        "Performance monitoring"
       ],
       badge: "Essential",
+      color: "orange"
+    },
+    {
+      icon: <Palette className="h-12 w-12 text-pink-500" />,
+      title: "UI/UX Design",
+      description: "Beautiful, intuitive interfaces that provide exceptional user experiences.",
+      features: [
+        "User research & personas",
+        "Wireframing & prototyping",
+        "Visual design systems",
+        "Usability testing",
+        "Accessibility compliance"
+      ],
+      badge: "Creative",
+      color: "pink"
+    },
+    {
+      icon: <Shield className="h-12 w-12 text-red-500" />,
+      title: "Maintenance & Support",
+      description: "Ongoing support, updates, and optimization for your applications.",
+      features: [
+        "24/7 monitoring",
+        "Security updates",
+        "Performance optimization",
+        "Bug fixes & patches",
+        "Feature enhancements"
+      ],
+      badge: "Ongoing",
       color: "red"
-    },
-    {
-      icon: <Zap className="h-12 w-12 text-yellow-500" />,
-      title: "Automation Hub",
-      description: "Powerful automation tools to streamline your workflows and boost productivity.",
-      features: [
-        "Workflow automation",
-        "Custom triggers",
-        "Integration hub",
-        "Smart notifications",
-        "Performance optimization"
-      ],
-      badge: "Featured",
-      color: "yellow"
-    },
-    {
-      icon: <Globe className="h-12 w-12 text-indigo-500" />,
-      title: "Global Connect",
-      description: "Connect with customers worldwide through our global infrastructure and CDN.",
-      features: [
-        "Global CDN",
-        "Multi-language support",
-        "Regional compliance",
-        "Edge computing",
-        "Local data centers"
-      ],
-      badge: "Premium",
-      color: "indigo"
     }
   ];
 
@@ -103,35 +103,35 @@ const Products = () => {
           {/* Header */}
           <div className="text-center mb-16">
             <h1 className="text-5xl font-bold text-white mb-6">
-              Powerful Products for
-              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"> Modern Business</span>
+              Software Development
+              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"> Services</span>
             </h1>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Discover our comprehensive suite of tools designed to accelerate your business growth and streamline operations.
+              From concept to deployment, we provide comprehensive software development services that transform your ideas into powerful digital solutions.
             </p>
           </div>
 
-          {/* Products Grid */}
+          {/* Services Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-            {products.map((product, index) => (
+            {services.map((service, index) => (
               <Card key={index} className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/15 transition-all duration-300 group hover:scale-105">
                 <CardHeader>
                   <div className="flex justify-between items-start mb-4">
                     <div className="p-3 rounded-lg bg-white/10 group-hover:bg-white/20 transition-colors duration-300">
-                      {product.icon}
+                      {service.icon}
                     </div>
-                    <Badge variant="secondary" className={`bg-${product.color}-500/20 text-${product.color}-300 border-${product.color}-500/30`}>
-                      {product.badge}
+                    <Badge variant="secondary" className={`bg-${service.color}-500/20 text-${service.color}-300 border-${service.color}-500/30`}>
+                      {service.badge}
                     </Badge>
                   </div>
-                  <CardTitle className="text-white text-xl">{product.title}</CardTitle>
+                  <CardTitle className="text-white text-xl">{service.title}</CardTitle>
                   <CardDescription className="text-gray-300">
-                    {product.description}
+                    {service.description}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-2 mb-6">
-                    {product.features.map((feature, featureIndex) => (
+                    {service.features.map((feature, featureIndex) => (
                       <li key={featureIndex} className="flex items-center text-gray-300">
                         <CheckCircle className="h-4 w-4 text-green-400 mr-2 flex-shrink-0" />
                         {feature}
@@ -139,7 +139,7 @@ const Products = () => {
                     ))}
                   </ul>
                   <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
-                    Learn More
+                    Get Quote
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </CardContent>
@@ -149,9 +149,9 @@ const Products = () => {
 
           {/* CTA Section */}
           <div className="text-center bg-white/5 backdrop-blur-sm rounded-2xl p-12 border border-white/20">
-            <h2 className="text-3xl font-bold text-white mb-4">Ready to Transform Your Business?</h2>
+            <h2 className="text-3xl font-bold text-white mb-4">Ready to Start Your Project?</h2>
             <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
-              Start your free trial today and experience the power of our integrated platform.
+              Let's discuss your requirements and create a custom solution that perfectly fits your business needs.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/pricing">
@@ -162,7 +162,7 @@ const Products = () => {
               </Link>
               <Link to="/login">
                 <Button variant="outline" size="lg" className="border-white/20 text-white hover:bg-white/10 px-8 py-3">
-                  Start Free Trial
+                  Start Your Project
                 </Button>
               </Link>
             </div>

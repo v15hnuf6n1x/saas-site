@@ -1,26 +1,42 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, CheckCircle, Star, Users, Zap, Shield } from "lucide-react";
+import { ArrowRight, CheckCircle, Star, Users, Code2, Shield, Smartphone, Database, Cloud, Palette } from "lucide-react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 const Index = () => {
-  const features = [
+  const services = [
     {
-      icon: <Zap className="h-8 w-8 text-blue-500" />,
-      title: "Lightning Fast",
-      description: "Built for speed and performance with cutting-edge technology"
+      icon: <Code2 className="h-8 w-8 text-blue-500" />,
+      title: "Custom Web Development",
+      description: "Full-stack web applications built with modern technologies like React, Node.js, and TypeScript"
     },
     {
-      icon: <Shield className="h-8 w-8 text-green-500" />,
-      title: "Enterprise Security",
-      description: "Bank-level security with end-to-end encryption"
+      icon: <Smartphone className="h-8 w-8 text-green-500" />,
+      title: "Mobile App Development",
+      description: "Native iOS and Android apps, plus cross-platform solutions for maximum reach"
     },
     {
-      icon: <Users className="h-8 w-8 text-purple-500" />,
-      title: "Team Collaboration",
-      description: "Work together seamlessly with your entire team"
+      icon: <Database className="h-8 w-8 text-purple-500" />,
+      title: "API Development",
+      description: "Robust RESTful APIs, GraphQL services, and microservices architecture"
+    },
+    {
+      icon: <Cloud className="h-8 w-8 text-orange-500" />,
+      title: "Cloud Solutions",
+      description: "AWS, Azure deployment, DevOps automation, and scalable infrastructure"
+    },
+    {
+      icon: <Palette className="h-8 w-8 text-pink-500" />,
+      title: "UI/UX Design",
+      description: "Beautiful, intuitive interfaces that provide exceptional user experiences"
+    },
+    {
+      icon: <Shield className="h-8 w-8 text-red-500" />,
+      title: "Maintenance & Support",
+      description: "Ongoing support, updates, and optimization for your applications"
     }
   ];
 
@@ -28,21 +44,29 @@ const Index = () => {
     {
       name: "Sarah Johnson",
       role: "CEO, TechStart",
-      content: "This platform transformed how we manage our business. Absolutely incredible!",
+      content: "Nexus built our entire platform from scratch. Their expertise and attention to detail is unmatched!",
       rating: 5
     },
     {
       name: "Michael Chen",
       role: "CTO, InnovateCorp",
-      content: "The best investment we've made for our company's growth.",
+      content: "The mobile app they developed exceeded our expectations. Highly recommended!",
       rating: 5
     },
     {
       name: "Emily Davis",
       role: "Product Manager, ScaleUp",
-      content: "Intuitive, powerful, and reliable. Everything we needed in one place.",
+      content: "Professional, reliable, and delivered exactly what we needed on time and on budget.",
       rating: 5
     }
+  ];
+
+  const process = [
+    { step: "01", title: "Discovery", description: "We understand your vision, requirements, and business goals" },
+    { step: "02", title: "Design", description: "Create wireframes, prototypes, and user experience designs" },
+    { step: "03", title: "Develop", description: "Build your application using cutting-edge technologies" },
+    { step: "04", title: "Deploy", description: "Launch your application with proper testing and optimization" },
+    { step: "05", title: "Support", description: "Ongoing maintenance, updates, and technical support" }
   ];
 
   return (
@@ -55,22 +79,22 @@ const Index = () => {
         <div className="relative container mx-auto px-4">
           <div className="text-center max-w-4xl mx-auto">
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-              The Future of
-              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"> Business</span>
+              Build Your Next
+              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"> Digital Solution</span>
             </h1>
             <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-              Streamline your workflow, boost productivity, and scale your business with our comprehensive SaaS platform.
+              We're Nexus - a software building agency that transforms your ideas into powerful, scalable applications. From web apps to mobile solutions, we've got you covered.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/login">
                 <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 text-lg">
-                  Get Started Free
+                  Start Your Project
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
               <Link to="/products">
                 <Button variant="outline" size="lg" className="border-white/20 text-white hover:bg-white/10 px-8 py-3 text-lg">
-                  View Products
+                  View Our Services
                 </Button>
               </Link>
             </div>
@@ -78,27 +102,27 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Services Section */}
       <section className="py-20 bg-white/5 backdrop-blur-sm">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">Why Choose Our Platform?</h2>
+            <h2 className="text-4xl font-bold text-white mb-4">Our Development Services</h2>
             <p className="text-gray-300 text-lg max-w-2xl mx-auto">
-              Experience the power of modern technology with features designed for growth.
+              From concept to deployment, we provide comprehensive software development services tailored to your needs.
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {services.map((service, index) => (
               <Card key={index} className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20 transition-all duration-300 group">
                 <CardHeader className="text-center">
                   <div className="mx-auto mb-4 p-3 rounded-full bg-white/10 w-fit group-hover:scale-110 transition-transform duration-300">
-                    {feature.icon}
+                    {service.icon}
                   </div>
-                  <CardTitle className="text-white text-xl">{feature.title}</CardTitle>
+                  <CardTitle className="text-white text-xl">{service.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <CardDescription className="text-gray-300 text-center">
-                    {feature.description}
+                    {service.description}
                   </CardDescription>
                 </CardContent>
               </Card>
@@ -107,12 +131,33 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Testimonials Section */}
+      {/* Process Section */}
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">Loved by Thousands</h2>
-            <p className="text-gray-300 text-lg">See what our customers have to say</p>
+            <h2 className="text-4xl font-bold text-white mb-4">How We Work</h2>
+            <p className="text-gray-300 text-lg">Our proven development process ensures quality results</p>
+          </div>
+          <div className="grid md:grid-cols-5 gap-8">
+            {process.map((item, index) => (
+              <div key={index} className="text-center">
+                <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">{item.step}</span>
+                </div>
+                <h3 className="text-white font-semibold text-lg mb-2">{item.title}</h3>
+                <p className="text-gray-400 text-sm">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-20 bg-white/5 backdrop-blur-sm">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-white mb-4">What Our Clients Say</h2>
+            <p className="text-gray-300 text-lg">Trusted by startups and enterprises alike</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
@@ -138,13 +183,13 @@ const Index = () => {
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-blue-600/20 to-purple-600/20">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold text-white mb-4">Ready to Get Started?</h2>
+          <h2 className="text-4xl font-bold text-white mb-4">Ready to Build Something Amazing?</h2>
           <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-            Join thousands of companies already using our platform to scale their business.
+            Let's discuss your project and see how we can bring your vision to life with cutting-edge technology.
           </p>
           <Link to="/pricing">
             <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg">
-              View Pricing Plans
+              Get Started Today
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </Link>
