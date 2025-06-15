@@ -38,9 +38,18 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     
-    <!-- Preconnect to external domains -->
+    <!-- Performance optimizations -->
     <link rel="preconnect" href="https://images.unsplash.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/src/main.tsx" as="script" />
+    <link rel="preload" href="/src/index.css" as="style" />
+    
+    <!-- Resource hints for better performance -->
+    <link rel="prefetch" href="/src/components/Navbar.tsx" />
+    <link rel="prefetch" href="/src/components/Footer.tsx" />
   </head>
 
   <body>

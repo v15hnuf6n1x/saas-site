@@ -1,11 +1,15 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, CheckCircle, Star, Users, Code2, Shield, Smartphone, Database, Cloud, Palette } from "lucide-react";
 import { Link } from "react-router-dom";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import { lazy, Suspense } from "react";
 import SEOHead from "@/components/SEOHead";
 import { organizationSchema, createReviewSchema } from "@/lib/structuredData";
+
+// Lazy load heavy components
+const Navbar = lazy(() => import("@/components/Navbar"));
+const Footer = lazy(() => import("@/components/Footer"));
 
 const Index = () => {
   const services = [
@@ -88,7 +92,9 @@ const Index = () => {
         structuredData={homepageStructuredData}
       />
       
-      <Navbar />
+      <Suspense fallback={<div className="h-16 bg-slate-900/50"></div>}>
+        <Navbar />
+      </Suspense>
       
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-20 pb-32">
@@ -213,7 +219,9 @@ const Index = () => {
         </div>
       </section>
 
-      <Footer />
+      <Suspense fallback={<div className="h-32 bg-slate-900/50"></div>}>
+        <Footer />
+      </Suspense>
     </div>
   );
 };
