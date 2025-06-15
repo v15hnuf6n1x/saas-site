@@ -25,13 +25,14 @@ const PerformanceMonitor = () => {
       new PerformanceObserver((entryList) => {
         const entries = entryList.getEntries();
         entries.forEach((entry) => {
-          console.log('FID:', entry.processingStart - entry.startTime);
+          const eventEntry = entry as PerformanceEventTiming;
+          console.log('FID:', eventEntry.processingStart - eventEntry.startTime);
           
           if (typeof window !== 'undefined' && window.gtag) {
             window.gtag('event', 'web_vitals', {
               event_category: 'Web Vitals',
               event_label: 'FID',
-              value: Math.round(entry.processingStart - entry.startTime),
+              value: Math.round(eventEntry.processingStart - eventEntry.startTime),
             });
           }
         });
@@ -42,8 +43,9 @@ const PerformanceMonitor = () => {
       new PerformanceObserver((entryList) => {
         const entries = entryList.getEntries();
         entries.forEach((entry) => {
-          if (!entry.hadRecentInput) {
-            clsValue += entry.value;
+          const layoutShiftEntry = entry as any; // Using any for layout-shift as it's not in standard types
+          if (!layoutShiftEntry.hadRecentInput) {
+            clsValue += layoutShiftEntry.value;
           }
         });
         console.log('CLS:', clsValue);
