@@ -10,7 +10,9 @@ import Pricing from "./pages/Pricing";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import Support from "./pages/Support";
 import NotFound from "./pages/NotFound";
+import ChatAssistant from "./components/ChatAssistant";
 
 const queryClient = new QueryClient();
 
@@ -27,8 +29,10 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/support" element={<Support />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <ChatAssistant />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

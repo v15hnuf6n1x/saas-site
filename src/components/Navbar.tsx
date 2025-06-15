@@ -21,6 +21,9 @@ const Navbar = () => {
           <Link to="/pricing" className="text-white/80 hover:text-white transition-colors">
             Pricing
           </Link>
+          <Link to="/support" className="text-white/80 hover:text-white transition-colors">
+            Support
+          </Link>
           <Link to="/login" className="text-white/80 hover:text-white transition-colors">
             Login
           </Link>
