@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -22,13 +21,42 @@ import {
   AlertCircle,
   Calendar,
   FileText,
-  MessageSquare
+  MessageSquare,
+  Mail,
+  Phone,
+  Globe,
+  CreditCard,
+  TrendingUp,
+  TrendingDown,
+  Eye,
+  Edit,
+  Trash2,
+  Download,
+  Upload,
+  Plus,
+  Filter,
+  PieChart,
+  BarChart3,
+  UserCheck,
+  UserX,
+  Briefcase,
+  Target,
+  Zap,
+  Database,
+  Server
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from "recharts";
+import { useUser } from "@/contexts/UserContext";
+import { useToast } from "@/hooks/use-toast";
 
 const AdminDashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [activeTab, setActiveTab] = useState("overview");
+  const { user } = useUser();
+  const { toast } = useToast();
+
+  const isOwner = user?.role === 'owner';
 
   const adminStats = [
     {
@@ -59,6 +87,63 @@ const AdminDashboard = () => {
       icon: <Activity className="h-4 w-4 text-orange-600" />,
       trend: "up"
     }
+  ];
+
+  const teamMembers = [
+    {
+      id: 1,
+      name: "John Smith",
+      role: "Senior Developer",
+      email: "john@nexus.com",
+      status: "Active",
+      projects: 3,
+      utilization: 85,
+      hourlyRate: "$120",
+      avatar: "JS",
+      skills: ["React", "Node.js", "Python"]
+    },
+    {
+      id: 2,
+      name: "Sarah Wilson",
+      role: "UI/UX Designer",
+      email: "sarah@nexus.com",
+      status: "Active",
+      projects: 2,
+      utilization: 90,
+      hourlyRate: "$95",
+      avatar: "SW",
+      skills: ["Figma", "Adobe XD", "React"]
+    },
+    {
+      id: 3,
+      name: "Mike Johnson",
+      role: "DevOps Engineer",
+      email: "mike@nexus.com",
+      status: "On Leave",
+      projects: 1,
+      utilization: 0,
+      hourlyRate: "$110",
+      avatar: "MJ",
+      skills: ["AWS", "Docker", "Kubernetes"]
+    }
+  ];
+
+  const financialData = [
+    { month: "Jan", revenue: 245000, expenses: 180000, profit: 65000 },
+    { month: "Feb", revenue: 280000, expenses: 195000, profit: 85000 },
+    { month: "Mar", revenue: 310000, expenses: 210000, profit: 100000 },
+    { month: "Apr", revenue: 295000, expenses: 205000, profit: 90000 },
+    { month: "May", revenue: 340000, expenses: 220000, profit: 120000 },
+    { month: "Jun", revenue: 324000, expenses: 215000, profit: 109000 },
+  ];
+
+  const systemMetrics = [
+    { name: "Server Uptime", value: "99.9%", status: "good" },
+    { name: "API Response Time", value: "145ms", status: "good" },
+    { name: "Database Performance", value: "98%", status: "good" },
+    { name: "Active Sessions", value: "1,234", status: "normal" },
+    { name: "Error Rate", value: "0.02%", status: "good" },
+    { name: "Storage Usage", value: "78%", status: "warning" }
   ];
 
   const clients = [
@@ -197,6 +282,26 @@ const AdminDashboard = () => {
     client.contact.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleAction = (action: string, item?: any) => {
+    toast({
+      title: `${action} Action`,
+      description: `${action} functionality will be implemented soon.`,
+    });
+  };
+
+  const getMetricBadge = (status: string) => {
+    switch (status) {
+      case "good":
+        return <Badge className="bg-green-500/20 text-green-300 border-green-500/30">Good</Badge>;
+      case "warning":
+        return <Badge className="bg-yellow-500/20 text-yellow-300 border-yellow-500/30">Warning</Badge>;
+      case "error":
+        return <Badge className="bg-red-500/20 text-red-300 border-red-500/30">Error</Badge>;
+      default:
+        return <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30">Normal</Badge>;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       {/* Header */}
@@ -211,7 +316,7 @@ const AdminDashboard = () => {
             </Link>
             <Badge className="bg-red-500/20 text-red-300 border-red-500/30">
               <Shield className="h-3 w-3 mr-1" />
-              Admin Panel
+              {isOwner ? 'Owner Panel' : 'Admin Panel'}
             </Badge>
           </div>
           
@@ -220,8 +325,8 @@ const AdminDashboard = () => {
               <Settings className="h-4 w-4" />
             </Button>
             <Avatar>
-              <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face" />
-              <AvatarFallback>AD</AvatarFallback>
+              <AvatarImage src={user?.avatar} />
+              <AvatarFallback>{user?.name?.split(' ').map(n => n[0]).join('')}</AvatarFallback>
             </Avatar>
           </div>
         </div>
@@ -230,8 +335,14 @@ const AdminDashboard = () => {
       <div className="container mx-auto px-6 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Agency Dashboard</h1>
-          <p className="text-gray-300">Manage clients, projects, and monitor agency performance.</p>
+          <h1 className="text-3xl font-bold text-white mb-2">
+            {isOwner ? 'Owner Dashboard' : 'Admin Dashboard'}
+          </h1>
+          <p className="text-gray-300">
+            {isOwner 
+              ? 'Monitor business performance and manage all aspects of the agency.' 
+              : 'Manage clients, projects, and monitor agency performance.'}
+          </p>
         </div>
 
         {/* Stats Cards */}
@@ -254,8 +365,8 @@ const AdminDashboard = () => {
           ))}
         </div>
 
-        <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 bg-white/10">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-6 bg-white/10">
             <TabsTrigger value="overview" className="text-white data-[state=active]:bg-white/20">
               Overview
             </TabsTrigger>
@@ -267,6 +378,14 @@ const AdminDashboard = () => {
             </TabsTrigger>
             <TabsTrigger value="team" className="text-white data-[state=active]:bg-white/20">
               Team
+            </TabsTrigger>
+            {isOwner && (
+              <TabsTrigger value="finance" className="text-white data-[state=active]:bg-white/20">
+                Finance
+              </TabsTrigger>
+            )}
+            <TabsTrigger value="system" className="text-white data-[state=active]:bg-white/20">
+              System
             </TabsTrigger>
           </TabsList>
 
@@ -350,19 +469,39 @@ const AdminDashboard = () => {
                       Manage client relationships and projects
                     </CardDescription>
                   </div>
-                  <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
-                    <UserPlus className="h-4 w-4 mr-2" />
-                    Add Client
-                  </Button>
+                  <div className="flex space-x-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-white border-white/20 hover:bg-white/10"
+                      onClick={() => handleAction('Export Clients')}
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Export
+                    </Button>
+                    <Button 
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                      onClick={() => handleAction('Add Client')}
+                    >
+                      <UserPlus className="h-4 w-4 mr-2" />
+                      Add Client
+                    </Button>
+                  </div>
                 </div>
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                  <Input
-                    placeholder="Search clients..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-gray-400"
-                  />
+                <div className="flex space-x-4">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                    <Input
+                      placeholder="Search clients..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-gray-400"
+                    />
+                  </div>
+                  <Button variant="outline" size="sm" className="text-white border-white/20 hover:bg-white/10">
+                    <Filter className="h-4 w-4 mr-2" />
+                    Filter
+                  </Button>
                 </div>
               </CardHeader>
               <CardContent>
@@ -421,10 +560,32 @@ const AdminDashboard = () => {
           <TabsContent value="projects" className="mt-6">
             <Card className="bg-white/10 backdrop-blur-sm border-white/20">
               <CardHeader>
-                <CardTitle className="text-white">Active Projects</CardTitle>
-                <CardDescription className="text-gray-300">
-                  Monitor project progress and team assignments
-                </CardDescription>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle className="text-white">Project Management</CardTitle>
+                    <CardDescription className="text-gray-300">
+                      Monitor project progress and team assignments
+                    </CardDescription>
+                  </div>
+                  <div className="flex space-x-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-white border-white/20 hover:bg-white/10"
+                      onClick={() => handleAction('Export Projects')}
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Export
+                    </Button>
+                    <Button 
+                      className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white"
+                      onClick={() => handleAction('New Project')}
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      New Project
+                    </Button>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
                 <Table>
@@ -483,19 +644,313 @@ const AdminDashboard = () => {
           <TabsContent value="team" className="mt-6">
             <Card className="bg-white/10 backdrop-blur-sm border-white/20">
               <CardHeader>
-                <CardTitle className="text-white">Team Management</CardTitle>
-                <CardDescription className="text-gray-300">
-                  Manage development team and resource allocation
-                </CardDescription>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle className="text-white">Team Management</CardTitle>
+                    <CardDescription className="text-gray-300">
+                      Manage team members and resource allocation
+                    </CardDescription>
+                  </div>
+                  <div className="flex space-x-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-white border-white/20 hover:bg-white/10"
+                      onClick={() => handleAction('Export Team Data')}
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Export
+                    </Button>
+                    <Button 
+                      className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+                      onClick={() => handleAction('Add Team Member')}
+                    >
+                      <UserPlus className="h-4 w-4 mr-2" />
+                      Add Member
+                    </Button>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-12">
-                  <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-white mb-2">Team Management</h3>
-                  <p className="text-gray-400">Team member management and resource allocation tools will be available here.</p>
-                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow className="border-white/20">
+                      <TableHead className="text-gray-300">Member</TableHead>
+                      <TableHead className="text-gray-300">Role</TableHead>
+                      <TableHead className="text-gray-300">Status</TableHead>
+                      <TableHead className="text-gray-300">Projects</TableHead>
+                      <TableHead className="text-gray-300">Utilization</TableHead>
+                      {isOwner && <TableHead className="text-gray-300">Rate</TableHead>}
+                      <TableHead className="text-gray-300">Skills</TableHead>
+                      <TableHead className="text-gray-300">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {teamMembers.map((member) => (
+                      <TableRow key={member.id} className="border-white/20">
+                        <TableCell>
+                          <div className="flex items-center space-x-3">
+                            <Avatar>
+                              <AvatarFallback className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                                {member.avatar}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <div className="font-medium text-white">{member.name}</div>
+                              <div className="text-sm text-gray-400">{member.email}</div>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-gray-300">{member.role}</TableCell>
+                        <TableCell>
+                          {member.status === 'Active' ? (
+                            <Badge className="bg-green-500/20 text-green-300 border-green-500/30">Active</Badge>
+                          ) : (
+                            <Badge className="bg-yellow-500/20 text-yellow-300 border-yellow-500/30">On Leave</Badge>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-gray-300">{member.projects}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center space-x-2">
+                            <div className="w-12 bg-gray-700 rounded-full h-2">
+                              <div 
+                                className="bg-blue-500 h-2 rounded-full" 
+                                style={{ width: `${member.utilization}%` }}
+                              ></div>
+                            </div>
+                            <span className="text-xs text-gray-400">{member.utilization}%</span>
+                          </div>
+                        </TableCell>
+                        {isOwner && <TableCell className="text-gray-300">{member.hourlyRate}</TableCell>}
+                        <TableCell>
+                          <div className="flex flex-wrap gap-1">
+                            {member.skills.slice(0, 2).map((skill, index) => (
+                              <Badge key={index} variant="secondary" className="text-xs">
+                                {skill}
+                              </Badge>
+                            ))}
+                            {member.skills.length > 2 && (
+                              <Badge variant="secondary" className="text-xs">
+                                +{member.skills.length - 2}
+                              </Badge>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center space-x-2">
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="text-white hover:bg-white/10"
+                              onClick={() => handleAction('View Profile', member)}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="text-white hover:bg-white/10"
+                              onClick={() => handleAction('Edit Member', member)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="text-white hover:bg-white/10"
+                              onClick={() => handleAction('Message', member)}
+                            >
+                              <MessageSquare className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {isOwner && (
+            <TabsContent value="finance" className="mt-6">
+              <div className="space-y-6">
+                {/* Financial Overview Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium text-gray-300">Total Revenue</CardTitle>
+                      <TrendingUp className="h-4 w-4 text-green-600" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold text-white">$1,890,000</div>
+                      <p className="text-xs text-green-400">+15% from last quarter</p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium text-gray-300">Total Expenses</CardTitle>
+                      <TrendingDown className="h-4 w-4 text-red-600" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold text-white">$1,225,000</div>
+                      <p className="text-xs text-red-400">+8% from last quarter</p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium text-gray-300">Net Profit</CardTitle>
+                      <DollarSign className="h-4 w-4 text-purple-600" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold text-white">$665,000</div>
+                      <p className="text-xs text-green-400">+25% from last quarter</p>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Financial Chart */}
+                <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+                  <CardHeader>
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <CardTitle className="text-white">Financial Performance</CardTitle>
+                        <CardDescription className="text-gray-300">Monthly revenue, expenses, and profit</CardDescription>
+                      </div>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="text-white border-white/20 hover:bg-white/10"
+                        onClick={() => handleAction('Export Financial Report')}
+                      >
+                        <Download className="h-4 w-4 mr-2" />
+                        Export Report
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={400}>
+                      <LineChart data={financialData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                        <XAxis dataKey="month" stroke="#9CA3AF" />
+                        <YAxis stroke="#9CA3AF" />
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: '#1F2937', 
+                            border: '1px solid #374151',
+                            borderRadius: '8px',
+                            color: '#F9FAFB'
+                          }} 
+                        />
+                        <Line type="monotone" dataKey="revenue" stroke="#3B82F6" strokeWidth={2} />
+                        <Line type="monotone" dataKey="expenses" stroke="#EF4444" strokeWidth={2} />
+                        <Line type="monotone" dataKey="profit" stroke="#10B981" strokeWidth={2} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+          )}
+
+          <TabsContent value="system" className="mt-6">
+            <div className="space-y-6">
+              {/* System Metrics */}
+              <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+                <CardHeader>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <CardTitle className="text-white">System Health</CardTitle>
+                      <CardDescription className="text-gray-300">Monitor system performance and uptime</CardDescription>
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-white border-white/20 hover:bg-white/10"
+                      onClick={() => handleAction('Refresh Metrics')}
+                    >
+                      <Activity className="h-4 w-4 mr-2" />
+                      Refresh
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {systemMetrics.map((metric, index) => (
+                      <div key={index} className="p-4 bg-white/5 rounded-lg border border-white/10">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-sm text-gray-300">{metric.name}</span>
+                          {getMetricBadge(metric.status)}
+                        </div>
+                        <div className="text-xl font-bold text-white">{metric.value}</div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* System Actions */}
+              <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+                <CardHeader>
+                  <CardTitle className="text-white">System Management</CardTitle>
+                  <CardDescription className="text-gray-300">System administration and maintenance tools</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <Button 
+                      variant="outline" 
+                      className="h-20 flex-col text-white border-white/20 hover:bg-white/10"
+                      onClick={() => handleAction('Database Backup')}
+                    >
+                      <Database className="h-6 w-6 mb-2" />
+                      Database Backup
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="h-20 flex-col text-white border-white/20 hover:bg-white/10"
+                      onClick={() => handleAction('Server Logs')}
+                    >
+                      <FileText className="h-6 w-6 mb-2" />
+                      View Logs
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="h-20 flex-col text-white border-white/20 hover:bg-white/10"
+                      onClick={() => handleAction('System Settings')}
+                    >
+                      <Settings className="h-6 w-6 mb-2" />
+                      System Settings
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="h-20 flex-col text-white border-white/20 hover:bg-white/10"
+                      onClick={() => handleAction('Performance Monitor')}
+                    >
+                      <Activity className="h-6 w-6 mb-2" />
+                      Performance
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="h-20 flex-col text-white border-white/20 hover:bg-white/10"
+                      onClick={() => handleAction('Security Audit')}
+                    >
+                      <Shield className="h-6 w-6 mb-2" />
+                      Security Audit
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="h-20 flex-col text-white border-white/20 hover:bg-white/10"
+                      onClick={() => handleAction('API Management')}
+                    >
+                      <Server className="h-6 w-6 mb-2" />
+                      API Management
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
