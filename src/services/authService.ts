@@ -13,9 +13,9 @@ interface User {
   passwordHash: string;
 }
 
-// JWT secret as Uint8Array for jose library
+// JWT secret as Uint8Array for jose library - using Vite environment variable syntax
 const JWT_SECRET = new TextEncoder().encode(
-  process.env.VITE_JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production'
+  import.meta.env.VITE_JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production'
 );
 const JWT_EXPIRES_IN = '24h';
 const COOKIE_NAME = 'nexus_auth_token';
