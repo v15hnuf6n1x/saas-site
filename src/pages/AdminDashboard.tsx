@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -45,19 +46,38 @@ import {
   Database,
   Server
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart as RechartsPieChart, Pie, Cell } from "recharts";
 import { useUser } from "@/contexts/UserContext";
 import { useToast } from "@/hooks/use-toast";
 
+/**
+ * AdminDashboard Component
+ * 
+ * A comprehensive dashboard for admin and owner users to manage:
+ * - Client relationships and projects
+ * - Team members and resource allocation
+ * - Financial performance (owner-only features)
+ * - System health and maintenance
+ * 
+ * Features role-based access control with different capabilities for admin vs owner roles.
+ */
 const AdminDashboard = () => {
+  // State management for component functionality
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("overview");
-  const { user } = useUser();
+  
+  // Hooks for user context, navigation, and notifications
+  const { user, logout } = useUser();
+  const navigate = useNavigate();
   const { toast } = useToast();
 
+  // Role-based access control
   const isOwner = user?.role === 'owner';
 
+  /**
+   * Admin dashboard statistics - key metrics displayed in overview cards
+   */
   const adminStats = [
     {
       title: "Active Clients",
@@ -89,6 +109,9 @@ const AdminDashboard = () => {
     }
   ];
 
+  /**
+   * Team members data structure with skills, utilization, and project assignments
+   */
   const teamMembers = [
     {
       id: 1,
@@ -128,6 +151,9 @@ const AdminDashboard = () => {
     }
   ];
 
+  /**
+   * Financial data for charts and analytics (owner-only)
+   */
   const financialData = [
     { month: "Jan", revenue: 245000, expenses: 180000, profit: 65000 },
     { month: "Feb", revenue: 280000, expenses: 195000, profit: 85000 },
@@ -137,6 +163,9 @@ const AdminDashboard = () => {
     { month: "Jun", revenue: 324000, expenses: 215000, profit: 109000 },
   ];
 
+  /**
+   * System health metrics for monitoring infrastructure
+   */
   const systemMetrics = [
     { name: "Server Uptime", value: "99.9%", status: "good" },
     { name: "API Response Time", value: "145ms", status: "good" },
@@ -146,6 +175,9 @@ const AdminDashboard = () => {
     { name: "Storage Usage", value: "78%", status: "warning" }
   ];
 
+  /**
+   * Client data with project information and contact details
+   */
   const clients = [
     {
       id: 1,
@@ -197,6 +229,9 @@ const AdminDashboard = () => {
     }
   ];
 
+  /**
+   * Project data with status, progress, and team assignments
+   */
   const projects = [
     {
       id: 1,
@@ -233,6 +268,9 @@ const AdminDashboard = () => {
     }
   ];
 
+  /**
+   * Revenue data for charts and analytics
+   */
   const revenueData = [
     { month: "Jan", revenue: 245000, projects: 12 },
     { month: "Feb", revenue: 280000, projects: 15 },
@@ -242,6 +280,9 @@ const AdminDashboard = () => {
     { month: "Jun", revenue: 324000, projects: 19 },
   ];
 
+  /**
+   * Project type distribution for pie chart visualization
+   */
   const projectTypeDistribution = [
     { name: "Web Apps", value: 45, color: "#3B82F6" },
     { name: "Mobile Apps", value: 30, color: "#8B5CF6" },
@@ -249,6 +290,11 @@ const AdminDashboard = () => {
     { name: "Other", value: 10, color: "#F59E0B" },
   ];
 
+  /**
+   * Returns appropriate status badge based on client/project status
+   * @param status - The status string to convert to badge
+   * @returns JSX Badge component with appropriate styling
+   */
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "Active":
@@ -262,6 +308,11 @@ const AdminDashboard = () => {
     }
   };
 
+  /**
+   * Returns appropriate project status badge with color coding
+   * @param status - The project status string
+   * @returns JSX Badge component for project status
+   */
   const getProjectStatusBadge = (status: string) => {
     switch (status) {
       case "Live":
@@ -277,11 +328,20 @@ const AdminDashboard = () => {
     }
   };
 
+  /**
+   * Filters clients based on search term (name or contact)
+   */
   const filteredClients = clients.filter(client => 
     client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     client.contact.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  /**
+   * Generic action handler for admin dashboard actions
+   * Shows toast notification for placeholder functionality
+   * @param action - The action being performed
+   * @param item - Optional item being acted upon
+   */
   const handleAction = (action: string, item?: any) => {
     toast({
       title: `${action} Action`,
@@ -289,6 +349,11 @@ const AdminDashboard = () => {
     });
   };
 
+  /**
+   * Returns system metric status badge with appropriate color
+   * @param status - System metric status
+   * @returns JSX Badge component for system status
+   */
   const getMetricBadge = (status: string) => {
     switch (status) {
       case "good":
@@ -302,9 +367,41 @@ const AdminDashboard = () => {
     }
   };
 
+  /**
+   * Handles settings button click - opens settings modal or navigates to settings page
+   */
+  const handleSettingsClick = () => {
+    toast({
+      title: "Settings",
+      description: "Settings panel will open here. This will include system configuration, user preferences, and admin controls.",
+    });
+  };
+
+  /**
+   * Handles profile avatar click - opens user profile dropdown or navigates to profile
+   */
+  const handleProfileClick = () => {
+    toast({
+      title: "Profile Menu",
+      description: "Profile menu functionality. This could show user details, account settings, or logout options.",
+    });
+  };
+
+  /**
+   * Handles user logout from admin dashboard
+   */
+  const handleLogout = () => {
+    logout();
+    toast({
+      title: "Logged out",
+      description: "You have been successfully logged out of the admin dashboard.",
+    });
+    navigate("/");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* Header */}
+      {/* Header - Navigation and user controls */}
       <header className="bg-white/10 backdrop-blur-md border-b border-white/20">
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-4">
@@ -320,20 +417,37 @@ const AdminDashboard = () => {
             </Badge>
           </div>
           
+          {/* Right side controls - Settings and Profile */}
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" className="text-white hover:bg-white/10">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-white hover:bg-white/10"
+              onClick={handleSettingsClick}
+              title="Open Settings"
+            >
               <Settings className="h-4 w-4" />
             </Button>
-            <Avatar>
-              <AvatarImage src={user?.avatar} />
-              <AvatarFallback>{user?.name?.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-            </Avatar>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="p-0 rounded-full"
+              onClick={handleProfileClick}
+              title="Profile Menu"
+            >
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={user?.avatar} />
+                <AvatarFallback className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                  {user?.name?.split(' ').map(n => n[0]).join('')}
+                </AvatarFallback>
+              </Avatar>
+            </Button>
           </div>
         </div>
       </header>
 
       <div className="container mx-auto px-6 py-8">
-        {/* Welcome Section */}
+        {/* Welcome Section - Role-specific greeting and overview */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">
             {isOwner ? 'Owner Dashboard' : 'Admin Dashboard'}
@@ -345,7 +459,7 @@ const AdminDashboard = () => {
           </p>
         </div>
 
-        {/* Stats Cards */}
+        {/* Stats Cards - Key performance indicators */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {adminStats.map((stat, index) => (
             <Card key={index} className="bg-white/10 backdrop-blur-sm border-white/20">
@@ -365,6 +479,7 @@ const AdminDashboard = () => {
           ))}
         </div>
 
+        {/* Main Dashboard Tabs - Different management sections */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-6 bg-white/10">
             <TabsTrigger value="overview" className="text-white data-[state=active]:bg-white/20">
@@ -389,6 +504,7 @@ const AdminDashboard = () => {
             </TabsTrigger>
           </TabsList>
 
+          {/* Overview Tab - Charts and high-level metrics */}
           <TabsContent value="overview" className="mt-6">
             <div className="grid lg:grid-cols-2 gap-6">
               {/* Revenue Chart */}
@@ -459,6 +575,7 @@ const AdminDashboard = () => {
             </div>
           </TabsContent>
 
+          {/* Clients Tab - Client relationship management */}
           <TabsContent value="clients" className="mt-6">
             <Card className="bg-white/10 backdrop-blur-sm border-white/20">
               <CardHeader>
@@ -557,6 +674,7 @@ const AdminDashboard = () => {
             </Card>
           </TabsContent>
 
+          {/* Projects Tab - Project management and tracking */}
           <TabsContent value="projects" className="mt-6">
             <Card className="bg-white/10 backdrop-blur-sm border-white/20">
               <CardHeader>
@@ -641,6 +759,7 @@ const AdminDashboard = () => {
             </Card>
           </TabsContent>
 
+          {/* Team Tab - Team member management and resource allocation */}
           <TabsContent value="team" className="mt-6">
             <Card className="bg-white/10 backdrop-blur-sm border-white/20">
               <CardHeader>
@@ -772,6 +891,7 @@ const AdminDashboard = () => {
             </Card>
           </TabsContent>
 
+          {/* Finance Tab - Owner-only financial management */}
           {isOwner && (
             <TabsContent value="finance" className="mt-6">
               <div className="space-y-6">
@@ -855,6 +975,7 @@ const AdminDashboard = () => {
             </TabsContent>
           )}
 
+          {/* System Tab - System administration and monitoring */}
           <TabsContent value="system" className="mt-6">
             <div className="space-y-6">
               {/* System Metrics */}
