@@ -46,7 +46,7 @@ import {
   Server
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart as RechartsPieChart, Pie, Cell } from "recharts";
 import { useUser } from "@/contexts/UserContext";
 import { useToast } from "@/hooks/use-toast";
 
@@ -429,7 +429,7 @@ const AdminDashboard = () => {
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
-                    <PieChart>
+                    <RechartsPieChart>
                       <Pie
                         data={projectTypeDistribution}
                         cx="50%"
@@ -452,7 +452,7 @@ const AdminDashboard = () => {
                           color: '#F9FAFB'
                         }} 
                       />
-                    </PieChart>
+                    </RechartsPieChart>
                   </ResponsiveContainer>
                 </CardContent>
               </Card>
