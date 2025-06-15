@@ -9,17 +9,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Settings, User, LogOut, CreditCard, HelpCircle } from "lucide-react";
+import { Settings, User, LogOut, CreditCard, HelpCircle, Shield } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { Badge } from "@/components/ui/badge";
 
 const UserProfileDropdown = () => {
-  const { user } = useUser();
+  const { user, logout } = useUser();
   const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleLogout = () => {
+    logout();
     toast({
       title: "Logged out successfully",
       description: "You have been logged out of your account.",
@@ -43,6 +45,19 @@ const UserProfileDropdown = () => {
 
   if (!user) return null;
 
+  const getRoleBadge = (role: string) => {
+    switch (role) {
+      case 'owner':
+        return <Badge className="bg-purple-500/20 text-purple-300 border-purple-500/30">Owner</Badge>;
+      case 'admin':
+        return <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30">Admin</Badge>;
+      case 'client':
+        return <Badge className="bg-green-500/20 text-green-300 border-green-500/30">Client</Badge>;
+      default:
+        return null;
+    }
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -59,6 +74,9 @@ const UserProfileDropdown = () => {
             <p className="text-sm font-medium">{user.name}</p>
             <p className="text-xs text-gray-400">{user.email}</p>
             <p className="text-xs text-gray-400">{user.company}</p>
+            <div className="pt-1">
+              {getRoleBadge(user.role)}
+            </div>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-slate-700" />
@@ -69,13 +87,15 @@ const UserProfileDropdown = () => {
           <User className="mr-2 h-4 w-4" />
           <span>Profile</span>
         </DropdownMenuItem>
-        <DropdownMenuItem 
-          className="text-white hover:bg-slate-700 cursor-pointer"
-          onClick={handleBillingClick}
-        >
-          <CreditCard className="mr-2 h-4 w-4" />
-          <span>Billing</span>
-        </DropdownMenuItem>
+        {user.role === 'client' && (
+          <DropdownMenuItem 
+            className="text-white hover:bg-slate-700 cursor-pointer"
+            onClick={handleBillingClick}
+          >
+            <CreditCard className="mr-2 h-4 w-4" />
+            <span>Billing</span>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem className="text-white hover:bg-slate-700 cursor-pointer">
           <Settings className="mr-2 h-4 w-4" />
           <span>Settings</span>
@@ -84,6 +104,18 @@ const UserProfileDropdown = () => {
           <HelpCircle className="mr-2 h-4 w-4" />
           <span>Support</span>
         </DropdownMenuItem>
+        {(user.role === 'admin' || user.role === 'owner') && (
+          <>
+            <DropdownMenuSeparator className="bg-slate-700" />
+            <DropdownMenuItem 
+              className="text-white hover:bg-slate-700 cursor-pointer"
+              onClick={() => navigate('/admin')}
+            >
+              <Shield className="mr-2 h-4 w-4" />
+              <span>Admin Panel</span>
+            </DropdownMenuItem>
+          </>
+        )}
         <DropdownMenuSeparator className="bg-slate-700" />
         <DropdownMenuItem 
           className="text-white hover:bg-slate-700 cursor-pointer"

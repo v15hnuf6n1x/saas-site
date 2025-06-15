@@ -2,8 +2,12 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Code2 } from "lucide-react";
+import { useUser } from "@/contexts/UserContext";
+import UserProfileDropdown from "./UserProfileDropdown";
 
 const Navbar = () => {
+  const { user, isAuthenticated } = useUser();
+
   return (
     <nav className="absolute top-0 w-full z-50 bg-white/10 backdrop-blur-md border-b border-white/20">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -24,14 +28,38 @@ const Navbar = () => {
           <Link to="/support" className="text-white/80 hover:text-white transition-colors">
             Support
           </Link>
-          <Link to="/login" className="text-white/80 hover:text-white transition-colors">
-            Client Portal
-          </Link>
-          <Link to="/login">
-            <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
-              Start Project
-            </Button>
-          </Link>
+          
+          {isAuthenticated && user ? (
+            <>
+              {user.role === 'client' && (
+                <Link to="/dashboard" className="text-white/80 hover:text-white transition-colors">
+                  Client Portal
+                </Link>
+              )}
+              {(user.role === 'admin' || user.role === 'owner') && (
+                <>
+                  <Link to="/dashboard" className="text-white/80 hover:text-white transition-colors">
+                    Client Portal
+                  </Link>
+                  <Link to="/admin" className="text-white/80 hover:text-white transition-colors">
+                    Admin Portal
+                  </Link>
+                </>
+              )}
+              <UserProfileDropdown />
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="text-white/80 hover:text-white transition-colors">
+                Client Portal
+              </Link>
+              <Link to="/login">
+                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
+                  Start Project
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </nav>

@@ -6,29 +6,56 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Zap, Eye, EyeOff } from "lucide-react";
+import { Zap, Eye, EyeOff, Info } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useUser } from "@/contexts/UserContext";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { login, isAuthenticated, user } = useUser();
+
+  // Redirect if already authenticated
+  if (isAuthenticated && user) {
+    navigate(user.role === 'client' ? '/dashboard' : '/admin');
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulate login
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      const success = await login(email, password);
+      if (success) {
+        toast({
+          title: "Welcome back!",
+          description: "You have been successfully logged in.",
+        });
+        // Redirect based on user role
+        const userData = JSON.parse(localStorage.getItem('nexus_user') || '{}');
+        navigate(userData.role === 'client' ? '/dashboard' : '/admin');
+      } else {
+        toast({
+          title: "Login failed",
+          description: "Invalid email or password. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
       toast({
-        title: "Welcome back!",
-        description: "You have been successfully logged in.",
+        title: "Error",
+        description: "An error occurred during login. Please try again.",
+        variant: "destructive",
       });
-      navigate("/dashboard");
-    }, 1500);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -40,7 +67,7 @@ const Login = () => {
       setIsLoading(false);
       toast({
         title: "Account created!",
-        description: "Welcome to SaaSify. Your account has been created successfully.",
+        description: "Welcome to Nexus. Your account has been created successfully.",
       });
       navigate("/dashboard");
     }, 1500);
@@ -55,7 +82,7 @@ const Login = () => {
             <div className="p-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg">
               <Zap className="h-8 w-8 text-white" />
             </div>
-            <span className="text-2xl font-bold text-white">SaaSify</span>
+            <span className="text-2xl font-bold text-white">Nexus</span>
           </Link>
         </div>
 
@@ -67,6 +94,16 @@ const Login = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            <Alert className="mb-6 bg-blue-500/10 border-blue-500/30">
+              <Info className="h-4 w-4 text-blue-400" />
+              <AlertDescription className="text-blue-300 text-sm">
+                <strong>Demo Credentials:</strong><br />
+                Client: client@demo.com / demo<br />
+                Admin: admin@nexus.com / demo<br />
+                Owner: owner@nexus.com / demo
+              </AlertDescription>
+            </Alert>
+
             <Tabs defaultValue="login" className="w-full">
               <TabsList className="grid w-full grid-cols-2 bg-white/10">
                 <TabsTrigger value="login" className="text-white data-[state=active]:bg-white/20">
@@ -85,6 +122,8 @@ const Login = () => {
                       id="email"
                       type="email"
                       placeholder="Enter your email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
                       required
                     />
@@ -96,6 +135,8 @@ const Login = () => {
                         id="password"
                         type={showPassword ? "text" : "password"}
                         placeholder="Enter your password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 pr-10"
                         required
                       />
