@@ -1,4 +1,5 @@
 
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,6 +10,7 @@ import { UserProvider } from "@/contexts/UserContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Analytics from "@/components/Analytics";
 import PerformanceMonitor from "@/components/PerformanceMonitor";
+import { applySecurityHeaders } from "@/utils/securityConfig";
 import Index from "./pages/Index";
 import Products from "./pages/Products";
 import Pricing from "./pages/Pricing";
@@ -21,46 +23,53 @@ import ChatAssistant from "./components/ChatAssistant";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <HelmetProvider>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <UserProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Analytics />
-            <PerformanceMonitor />
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/products" element={<Products />} />
-              <Route path="/pricing" element={<Pricing />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/support" element={<Support />} />
-              <Route 
-                path="/dashboard" 
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/admin" 
-                element={
-                  <ProtectedRoute allowedRoles={['admin', 'owner']}>
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <ChatAssistant />
-          </BrowserRouter>
-        </UserProvider>
-      </TooltipProvider>
-    </QueryClientProvider>
-  </HelmetProvider>
-);
+const App = () => {
+  useEffect(() => {
+    // Apply security headers on app initialization
+    applySecurityHeaders();
+  }, []);
+
+  return (
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <UserProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Analytics />
+              <PerformanceMonitor />
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/products" element={<Products />} />
+                <Route path="/pricing" element={<Pricing />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/support" element={<Support />} />
+                <Route 
+                  path="/dashboard" 
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/admin" 
+                  element={
+                    <ProtectedRoute allowedRoles={['admin', 'owner']}>
+                      <AdminDashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              <ChatAssistant />
+            </BrowserRouter>
+          </UserProvider>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </HelmetProvider>
+  );
+};
 
 export default App;

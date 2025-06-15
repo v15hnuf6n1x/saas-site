@@ -1,6 +1,6 @@
 
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import { SignJWT, jwtVerify } from 'jose';
 import Cookies from 'js-cookie';
 
 interface User {
@@ -13,13 +13,15 @@ interface User {
   passwordHash: string;
 }
 
-// In a real app, this would be in environment variables
-const JWT_SECRET = process.env.VITE_JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production';
+// JWT secret as Uint8Array for jose library
+const JWT_SECRET = new TextEncoder().encode(
+  process.env.VITE_JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production'
+);
 const JWT_EXPIRES_IN = '24h';
 const COOKIE_NAME = 'nexus_auth_token';
 
-// Sample users with hashed passwords (password: 'demo')
-const DEMO_PASSWORD_HASH = '$2a$10$rOzJq9eJQqJ5Km5sKqF5qeKQYHJQqJ5Km5sKqF5qeKQYHJQqJ5Km5';
+// Sample users with properly hashed passwords (password: 'demo')
+const DEMO_PASSWORD_HASH = '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi';
 
 const sampleUsers: User[] = [
   {
@@ -77,12 +79,12 @@ export const authService = {
         return { success: false, error: 'Invalid credentials' };
       }
 
-      // Generate JWT token
-      const token = jwt.sign(
-        { userId: user.id, email: user.email, role: user.role },
-        JWT_SECRET,
-        { expiresIn: JWT_EXPIRES_IN }
-      );
+      // Generate JWT token using jose
+      const token = await new SignJWT({ userId: user.id, email: user.email, role: user.role })
+        .setProtectedHeader({ alg: 'HS256' })
+        .setIssuedAt()
+        .setExpirationTime('24h')
+        .sign(JWT_SECRET);
 
       // Set secure cookie
       Cookies.set(COOKIE_NAME, token, {
@@ -108,8 +110,8 @@ export const authService = {
       const token = Cookies.get(COOKIE_NAME);
       if (!token) return null;
 
-      const decoded = jwt.verify(token, JWT_SECRET) as any;
-      const user = sampleUsers.find(u => u.id === decoded.userId);
+      const { payload } = await jwtVerify(token, JWT_SECRET);
+      const user = sampleUsers.find(u => u.id === payload.userId);
       
       if (!user) return null;
 
@@ -123,6 +125,6 @@ export const authService = {
   },
 
   async hashPassword(password: string): Promise<string> {
-    return bcrypt.hash(password, 10);
+    return bcrypt.hash(password, 12);
   }
 };

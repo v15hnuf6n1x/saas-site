@@ -9,16 +9,18 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Zap, Eye, EyeOff, Info } from "lucide-react";
+import { Zap, Eye, EyeOff, Info, Shield } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@/contexts/UserContext";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { loginSchema, signupSchema, LoginInput, SignupInput } from "@/schemas/authSchemas";
+import { securityUtils } from "@/utils/securityUtils";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [loginAttempts, setLoginAttempts] = useState(0);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { login, isAuthenticated, user } = useUser();
@@ -47,17 +49,32 @@ const Login = () => {
   }
 
   const handleLogin = async (data: LoginInput) => {
+    // Check rate limiting
+    const clientId = `login_${data.email}_${navigator.userAgent}`;
+    if (!securityUtils.checkRateLimit(clientId, 5, 15 * 60 * 1000)) {
+      securityUtils.logSecurityEvent('rate_limit_exceeded', { email: data.email });
+      toast({
+        title: "Too many attempts",
+        description: "Please wait 15 minutes before trying again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
     
     try {
       const result = await login(data.email, data.password);
       if (result.success && result.user) {
+        securityUtils.logSecurityEvent('login_success', { email: data.email, role: result.user.role });
         toast({
           title: "Welcome back!",
           description: "You have been successfully logged in.",
         });
         navigate(result.user.role === 'client' ? '/dashboard' : '/admin');
       } else {
+        setLoginAttempts(prev => prev + 1);
+        securityUtils.logSecurityEvent('login_failed', { email: data.email, attempt: loginAttempts + 1 });
         toast({
           title: "Login failed",
           description: result.error || "Invalid credentials. Please try again.",
@@ -66,6 +83,7 @@ const Login = () => {
       }
     } catch (error) {
       console.error('Login error:', error);
+      securityUtils.logSecurityEvent('login_error', { email: data.email, error: String(error) });
       toast({
         title: "Error",
         description: "An unexpected error occurred. Please try again.",
@@ -105,7 +123,10 @@ const Login = () => {
 
         <Card className="bg-white/10 backdrop-blur-sm border-white/20">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl text-white">Welcome</CardTitle>
+            <CardTitle className="text-2xl text-white flex items-center justify-center gap-2">
+              <Shield className="h-5 w-5" />
+              Secure Login
+            </CardTitle>
             <CardDescription className="text-gray-300">
               Sign in to your account or create a new one
             </CardDescription>
@@ -120,6 +141,15 @@ const Login = () => {
                 Owner: owner@nexus.com / demo
               </AlertDescription>
             </Alert>
+
+            {loginAttempts >= 3 && (
+              <Alert className="mb-6 bg-red-500/10 border-red-500/30">
+                <Shield className="h-4 w-4 text-red-400" />
+                <AlertDescription className="text-red-300 text-sm">
+                  Multiple failed attempts detected. Please verify your credentials.
+                </AlertDescription>
+              </Alert>
+            )}
 
             <Tabs defaultValue="login" className="w-full">
               <TabsList className="grid w-full grid-cols-2 bg-white/10">
