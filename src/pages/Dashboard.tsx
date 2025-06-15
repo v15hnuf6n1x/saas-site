@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,16 +16,19 @@ import {
   Smartphone,
   Database,
   Globe,
-  Settings,
-  LogOut,
-  Bell
+  Settings
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import NotificationsDropdown from "@/components/NotificationsDropdown";
+import UserProfileDropdown from "@/components/UserProfileDropdown";
+import ProjectRequestModal from "@/components/ProjectRequestModal";
+import { useUser } from "@/contexts/UserContext";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useUser();
 
   const handleLogout = () => {
     toast({
@@ -162,6 +164,37 @@ const Dashboard = () => {
     }
   ];
 
+  const handleQuickAction = (action: string) => {
+    switch (action) {
+      case 'contact':
+        toast({
+          title: "Contact Team",
+          description: "Opening contact form...",
+        });
+        break;
+      case 'meeting':
+        toast({
+          title: "Schedule Meeting",
+          description: "Calendar integration coming soon!",
+        });
+        break;
+      case 'docs':
+        toast({
+          title: "Documentation",
+          description: "Opening documentation portal...",
+        });
+        break;
+      case 'feature':
+        toast({
+          title: "Feature Request",
+          description: "Feature request form coming soon!",
+        });
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       {/* Header */}
@@ -180,19 +213,11 @@ const Dashboard = () => {
           </div>
           
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" className="text-white hover:bg-white/10">
-              <Bell className="h-4 w-4" />
-            </Button>
+            <NotificationsDropdown />
             <Button variant="ghost" size="sm" className="text-white hover:bg-white/10">
               <Settings className="h-4 w-4" />
             </Button>
-            <Avatar>
-              <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face" />
-              <AvatarFallback>JD</AvatarFallback>
-            </Avatar>
-            <Button onClick={handleLogout} variant="ghost" size="sm" className="text-white hover:bg-white/10">
-              <LogOut className="h-4 w-4" />
-            </Button>
+            <UserProfileDropdown />
           </div>
         </div>
       </header>
@@ -200,7 +225,7 @@ const Dashboard = () => {
       <div className="container mx-auto px-6 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Welcome back, John!</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">Welcome back, {user?.name?.split(' ')[0] || 'John'}!</h1>
           <p className="text-gray-300">Here's an overview of your projects and their current status.</p>
         </div>
 
@@ -226,10 +251,7 @@ const Dashboard = () => {
         <div className="mb-8">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-white">Your Applications</h2>
-            <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
-              <MessageSquare className="h-4 w-4 mr-2" />
-              Request New Project
-            </Button>
+            <ProjectRequestModal />
           </div>
           
           <div className="grid lg:grid-cols-2 gap-6">
@@ -324,19 +346,31 @@ const Dashboard = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Button className="w-full justify-start bg-white/10 hover:bg-white/20 text-white border-white/20">
+              <Button 
+                onClick={() => handleQuickAction('contact')}
+                className="w-full justify-start bg-white/10 hover:bg-white/20 text-white border-white/20"
+              >
                 <MessageSquare className="h-4 w-4 mr-2" />
                 Contact Development Team
               </Button>
-              <Button className="w-full justify-start bg-white/10 hover:bg-white/20 text-white border-white/20">
+              <Button 
+                onClick={() => handleQuickAction('meeting')}
+                className="w-full justify-start bg-white/10 hover:bg-white/20 text-white border-white/20"
+              >
                 <Calendar className="h-4 w-4 mr-2" />
                 Schedule Meeting
               </Button>
-              <Button className="w-full justify-start bg-white/10 hover:bg-white/20 text-white border-white/20">
+              <Button 
+                onClick={() => handleQuickAction('docs')}
+                className="w-full justify-start bg-white/10 hover:bg-white/20 text-white border-white/20"
+              >
                 <FileText className="h-4 w-4 mr-2" />
                 View All Documentation
               </Button>
-              <Button className="w-full justify-start bg-white/10 hover:bg-white/20 text-white border-white/20">
+              <Button 
+                onClick={() => handleQuickAction('feature')}
+                className="w-full justify-start bg-white/10 hover:bg-white/20 text-white border-white/20"
+              >
                 <Code2 className="h-4 w-4 mr-2" />
                 Request New Feature
               </Button>
