@@ -1,5 +1,5 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { authService, AuthResult } from '@/services/authService';
 
 type UserRole = 'client' | 'admin' | 'owner';
 
@@ -26,8 +26,9 @@ interface UserContextType {
   notifications: Notification[];
   unreadCount: number;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
-  logout: () => void;
+  isLoading: boolean;
+  login: (email: string, password: string) => Promise<AuthResult>;
+  logout: () => Promise<void>;
   markNotificationAsRead: (id: string) => void;
   markAllAsRead: () => void;
   addNotification: (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => void;
@@ -43,38 +44,12 @@ export const useUser = () => {
   return context;
 };
 
-// Sample users for different roles
-const sampleUsers: Record<string, User> = {
-  'client@demo.com': {
-    id: '1',
-    name: 'John Doe',
-    email: 'client@demo.com',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face',
-    company: 'TechCorp Solutions',
-    role: 'client'
-  },
-  'admin@nexus.com': {
-    id: '2',
-    name: 'Sarah Admin',
-    email: 'admin@nexus.com',
-    avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=32&h=32&fit=crop&crop=face',
-    company: 'Nexus Agency',
-    role: 'admin'
-  },
-  'owner@nexus.com': {
-    id: '3',
-    name: 'Alex Owner',
-    email: 'owner@nexus.com',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face',
-    company: 'Nexus Agency',
-    role: 'owner'
-  }
-};
-
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
+  // ... keep existing code (notifications state and initial data)
   const [notifications, setNotifications] = useState<Notification[]>([
     {
       id: '1',
@@ -104,29 +79,47 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Check for existing session on mount
   useEffect(() => {
-    const savedUser = localStorage.getItem('nexus_user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-      setIsAuthenticated(true);
-    }
+    const checkAuth = async () => {
+      try {
+        const currentUser = await authService.getCurrentUser();
+        if (currentUser) {
+          setUser(currentUser);
+          setIsAuthenticated(true);
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        // Clear any invalid session data
+        await authService.logout();
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
-    // Simple demo authentication
-    const foundUser = sampleUsers[email];
-    if (foundUser && password === 'demo') {
-      setUser(foundUser);
-      setIsAuthenticated(true);
-      localStorage.setItem('nexus_user', JSON.stringify(foundUser));
-      return true;
+  const login = async (email: string, password: string): Promise<AuthResult> => {
+    try {
+      const result = await authService.login(email, password);
+      if (result.success && result.user) {
+        setUser(result.user);
+        setIsAuthenticated(true);
+      }
+      return result;
+    } catch (error) {
+      console.error('Login failed:', error);
+      return { success: false, error: 'Authentication failed' };
     }
-    return false;
   };
 
-  const logout = () => {
-    setUser(null);
-    setIsAuthenticated(false);
-    localStorage.removeItem('nexus_user');
+  const logout = async () => {
+    try {
+      await authService.logout();
+      setUser(null);
+      setIsAuthenticated(false);
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
   };
 
   const unreadCount = notifications.filter(n => !n.read).length;
@@ -159,6 +152,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       notifications,
       unreadCount,
       isAuthenticated,
+      isLoading,
       login,
       logout,
       markNotificationAsRead,
