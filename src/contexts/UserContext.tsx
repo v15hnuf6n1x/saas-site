@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { authService, AuthResult } from '@/services/authService';
+import { Session } from '@supabase/supabase-js';
+import { supabaseAuthService, AuthResult } from '@/services/supabaseAuthService';
 
 type UserRole = 'client' | 'admin' | 'owner';
 
@@ -23,11 +24,18 @@ interface Notification {
 
 interface UserContextType {
   user: User | null;
+  session: Session | null;
   notifications: Notification[];
   unreadCount: number;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<AuthResult>;
+  signup: (email: string, password: string, metadata?: {
+    firstName?: string;
+    lastName?: string;
+    company?: string;
+    role?: string;
+  }) => Promise<AuthResult>;
   logout: () => Promise<void>;
   markNotificationAsRead: (id: string) => void;
   markAllAsRead: () => void;
@@ -46,6 +54,7 @@ export const useUser = () => {
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -77,30 +86,65 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   ]);
 
-  // Check for existing session on mount
+  // Set up auth state listener and check for existing session
   useEffect(() => {
-    const checkAuth = async () => {
+    let mounted = true;
+
+    // Set up auth state listener
+    const { data: { subscription } } = supabaseAuthService.onAuthStateChange(
+      async (event, session) => {
+        if (!mounted) return;
+
+        console.log('Auth state changed:', event, session);
+        setSession(session);
+        
+        if (session?.user) {
+          const currentUser = await supabaseAuthService.getCurrentUser();
+          if (mounted && currentUser) {
+            setUser(currentUser);
+            setIsAuthenticated(true);
+          }
+        } else {
+          setUser(null);
+          setIsAuthenticated(false);
+        }
+        
+        if (mounted) {
+          setIsLoading(false);
+        }
+      }
+    );
+
+    // Check for existing session
+    const initializeAuth = async () => {
       try {
-        const currentUser = await authService.getCurrentUser();
-        if (currentUser) {
-          setUser(currentUser);
-          setIsAuthenticated(true);
+        const currentUser = await supabaseAuthService.getCurrentUser();
+        if (mounted) {
+          if (currentUser) {
+            setUser(currentUser);
+            setIsAuthenticated(true);
+          }
+          setIsLoading(false);
         }
       } catch (error) {
-        console.error('Auth check failed:', error);
-        // Clear any invalid session data
-        await authService.logout();
-      } finally {
-        setIsLoading(false);
+        console.error('Auth initialization error:', error);
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     };
 
-    checkAuth();
+    initializeAuth();
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const login = async (email: string, password: string): Promise<AuthResult> => {
     try {
-      const result = await authService.login(email, password);
+      const result = await supabaseAuthService.signIn(email, password);
       if (result.success && result.user) {
         setUser(result.user);
         setIsAuthenticated(true);
@@ -112,10 +156,26 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const signup = async (email: string, password: string, metadata?: {
+    firstName?: string;
+    lastName?: string;
+    company?: string;
+    role?: string;
+  }): Promise<AuthResult> => {
+    try {
+      const result = await supabaseAuthService.signUp(email, password, metadata);
+      return result;
+    } catch (error) {
+      console.error('Signup failed:', error);
+      return { success: false, error: 'Account creation failed' };
+    }
+  };
+
   const logout = async () => {
     try {
-      await authService.logout();
+      await supabaseAuthService.signOut();
       setUser(null);
+      setSession(null);
       setIsAuthenticated(false);
     } catch (error) {
       console.error('Logout failed:', error);
@@ -149,11 +209,13 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   return (
     <UserContext.Provider value={{
       user,
+      session,
       notifications,
       unreadCount,
       isAuthenticated,
       isLoading,
       login,
+      signup,
       logout,
       markNotificationAsRead,
       markAllAsRead,

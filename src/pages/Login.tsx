@@ -5,7 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -23,7 +22,7 @@ const Login = () => {
   const [loginAttempts, setLoginAttempts] = useState(0);
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { login, isAuthenticated, user } = useUser();
+  const { login, signup, isAuthenticated, user } = useUser();
 
   const loginForm = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
@@ -97,15 +96,39 @@ const Login = () => {
   const handleSignup = async (data: SignupInput) => {
     setIsLoading(true);
     
-    // Simulate signup process
-    setTimeout(() => {
-      setIsLoading(false);
-      toast({
-        title: "Account created!",
-        description: "Welcome to Nexus. Your account has been created successfully.",
+    try {
+      const result = await signup(data.email, data.password, {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        company: "New Company",
+        role: "client"
       });
-      navigate("/dashboard");
-    }, 1500);
+
+      if (result.success) {
+        toast({
+          title: "Account created!",
+          description: "Please check your email to verify your account before signing in.",
+        });
+        // Switch to login tab after successful signup
+        const loginTab = document.querySelector('[value="login"]') as HTMLElement;
+        loginTab?.click();
+      } else {
+        toast({
+          title: "Signup failed",
+          description: result.error || "Failed to create account. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Signup error:', error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -135,10 +158,7 @@ const Login = () => {
             <Alert className="mb-6 bg-blue-500/10 border-blue-500/30">
               <Info className="h-4 w-4 text-blue-400" />
               <AlertDescription className="text-blue-300 text-sm">
-                <strong>Demo Credentials:</strong><br />
-                Client: client@demo.com / demo<br />
-                Admin: admin@nexus.com / demo<br />
-                Owner: owner@nexus.com / demo
+                <strong>Create Account:</strong> Use the Sign Up tab to create a new account with Supabase authentication.
               </AlertDescription>
             </Alert>
 
@@ -217,12 +237,6 @@ const Login = () => {
                     </Button>
                   </form>
                 </Form>
-                
-                <div className="text-center">
-                  <a href="#" className="text-sm text-blue-400 hover:text-blue-300">
-                    Forgot your password?
-                  </a>
-                </div>
               </TabsContent>
               
               <TabsContent value="signup" className="space-y-4 mt-6">
