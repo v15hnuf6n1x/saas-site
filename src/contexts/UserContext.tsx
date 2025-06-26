@@ -30,6 +30,7 @@ interface UserContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<AuthResult>;
+  loginWithOAuth: (provider: 'google' | 'github') => Promise<AuthResult>;
   signup: (email: string, password: string, metadata?: {
     firstName?: string;
     lastName?: string;
@@ -156,6 +157,16 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const loginWithOAuth = async (provider: 'google' | 'github'): Promise<AuthResult> => {
+    try {
+      const result = await supabaseAuthService.signInWithOAuth(provider);
+      return result;
+    } catch (error) {
+      console.error('OAuth login failed:', error);
+      return { success: false, error: 'OAuth authentication failed' };
+    }
+  };
+
   const signup = async (email: string, password: string, metadata?: {
     firstName?: string;
     lastName?: string;
@@ -215,6 +226,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isAuthenticated,
       isLoading,
       login,
+      loginWithOAuth,
       signup,
       logout,
       markNotificationAsRead,

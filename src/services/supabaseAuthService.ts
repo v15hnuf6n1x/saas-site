@@ -95,6 +95,26 @@ export const supabaseAuthService = {
     }
   },
 
+  async signInWithOAuth(provider: 'google' | 'github'): Promise<AuthResult> {
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/`
+        }
+      });
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error('OAuth signin error:', error);
+      return { success: false, error: 'OAuth authentication failed' };
+    }
+  },
+
   async signOut(): Promise<void> {
     try {
       await supabase.auth.signOut();
@@ -121,6 +141,26 @@ export const supabaseAuthService = {
     }
   },
 
+  async resetPassword(email: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(
+        email,
+        {
+          redirectTo: `${window.location.origin}/reset-password`,
+        }
+      );
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error('Reset password error:', error);
+      return { success: false, error: 'Failed to send reset email' };
+    }
+  },
+
   async getProfile(userId: string): Promise<Profile | null> {
     try {
       const { data, error } = await supabase
@@ -134,7 +174,7 @@ export const supabaseAuthService = {
         return null;
       }
 
-      return data;
+      return data as Profile;
     } catch (error) {
       console.error('Profile fetch error:', error);
       return null;
